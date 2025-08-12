@@ -1,0 +1,141 @@
+---------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+Backend Task Split
+Person 1 → Services (Core functionality)
+Handles business logic — how the app actually processes voice, text, and files.
+
+services/text_to_speech.py
+Input: Text string, optional voice settings (speed, pitch, language)
+
+Output: Path to generated audio file (MP3/WAV)
+
+Role: Convert given text into spoken audio.
+
+services/speech_to_text.py
+Input: Audio file path or audio stream
+
+Output: Recognized text string
+
+Role: Convert voice input to text.
+
+services/pdf_reader.py
+Input: Path to a PDF file, optional page range
+
+Output: Extracted text string(s)
+
+Role: Read and extract text from PDF files.
+
+services/epub_reader.py
+Input: Path to an EPUB file, optional chapter range
+
+Output: Extracted text string(s)
+
+Role: Read and extract text from EPUB files.
+----------------------------------------------------------------------------------------
+Person 2 → Routes (Flask endpoints)
+Connects frontend to backend — receives HTTP requests, calls services, sends back responses.
+
+routes/book_routes.py
+Input: HTTP requests with uploaded book files (PDF/EPUB) and parameters (page/chapter range)
+
+Output: JSON with extracted text or a status message
+
+Role: Handle book upload, reading, and text extraction.
+
+routes/voice_routes.py
+Input: HTTP requests with audio files or text
+
+Output: JSON with converted text or audio file download link
+
+Role: Handle speech-to-text and text-to-speech API calls.
+
+routes/health_check.py
+Input: HTTP GET request
+
+Output: JSON {status: "ok"}
+
+Role: Check if backend is running.
+
+routes/__init__.py
+Role: Registers all routes into Flask app.
+---------------------------------------------------------------------------------------
+Person 3 → Utils (Helper functions & configs)
+Provides reusable utilities for services and routes.
+
+utils/file_utils.py
+Input: File path or uploaded file object
+
+Output: File saved path, validation result, file metadata
+
+Role: Validate and save uploaded files, handle paths.
+
+utils/audio_utils.py
+Input: Audio file path, audio format settings
+
+Output: Processed audio file (trimmed, converted format)
+
+Role: Audio format conversions and optimizations.
+
+utils/config.py
+Input: None (loads from environment variables)
+
+Output: Configuration values (API keys, folder paths)
+
+Role: Central place for settings and constants.
+
+utils/__init__.py
+Role: Make utils accessible as a package.
+
+------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------
+Team Split
+Person 1 – Services
+
+Handles business logic for reading files & converting speech/text.
+
+Files:
+
+pdf_reader.py → Read PDF text.
+
+epub_reader.py → Read EPUB text.
+
+text_to_speech.py → Convert given text into audio (use gTTS for speed).
+
+speech_to_text.py → Convert audio to text (use SpeechRecognition).
+
+Inputs: File paths / raw text / audio file.
+
+Outputs: Extracted text or audio file path.
+
+Person 2 – Routes
+
+Handles HTTP API endpoints in Flask.
+
+Files:
+
+book_routes.py → Endpoints to upload books and return extracted text.
+
+voice_routes.py → Endpoints for speech-to-text & text-to-speech.
+
+health_check.py → Simple /health endpoint.
+
+Inputs: HTTP requests (JSON, file uploads, audio).
+
+Outputs: JSON responses or audio file download.
+
+Person 3 – Utils
+
+Handles helper functions & config.
+
+Files:
+
+file_utils.py → Save uploaded files, validate file types.
+
+audio_utils.py → Save audio files, handle audio format conversion if needed.
+
+config.py → Store constants like upload folder paths, allowed file types.
+
+Inputs: Raw files or audio from routes/services.
+
+Outputs: Processed file paths, cleaned file names.
+--------------------------------------------------------------------------------------------------------------------
